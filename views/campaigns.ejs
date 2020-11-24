@@ -1,0 +1,170 @@
+<%- include('header', {menu:'campaign'}) %>
+
+    <div class="ig_content_wrapper">
+        <div class="container">
+            <!-- no data start -->
+            <% if(campaign.length == '0'){ %>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="ig_no_data">
+                        <i class="fa fa-inbox"></i>
+                        <p>There is no campaign created yet.</p>
+                        <a href="/campaigns/create-campaign" class="ig_btn">+ Create New</a>
+                    </div>
+                </div>
+            </div>
+            <!-- no data end -->
+            <% }else{ %>
+            <!-- campaign list start -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="ig_camp_header">
+                        <h3>Campaigns (<%= campaign.length %>)</h3>
+                        <a href="/campaigns/create-campaign" class="ig_btn">+ Create New</a>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            <div class="row">
+                <% for(let i in campaign){ %>
+                    <div class="col-md-3">
+                        <div class="ig_campaign">
+                            <div class="ig_camp_icon"><i class="fa fa-inbox"></i></div>
+                            <div class="ig_camp_detail">
+                                <h4><%= campaign[i].campaign_name %></h4>
+                                <p><%= campaign[i].createdAt %></p>
+                            </div>
+                            <div class="ig_camp_options">
+                                <div class="ig_camp_option_toggle" data-toggle="dropdown">
+                                    <i class="fa fa-angle-down"></i>
+                                </div>
+                                <div class="ig_option_dropdown">
+                                    <ul>
+                                        <li><a class="edit_camp" href="/campaigns/create-campaign/<%= campaign[i].id %>">Edit</a></li>
+                                        <% if(campaign[i].template){ %>
+                                        <li><a class="prev_temp" data-toggle="modal" data-id="<%= campaign[i].id %>">Preview Template</a></li>
+                                        <% } %>
+                                        <li><a class="test_temp" data-toggle="modal" campaign-id="<%= campaign[i].id %>">Send Test Mail</a></li>
+                                        <li><a class="group_popup" data-toggle="modal" group-cam-id="<%= campaign[i].id %>">Send to group</a></li>
+                                        <li><a class="contact_popup" data-toggle="modal" contact-cam-id="<%= campaign[i].id %>">Send to contact</a></li>
+                                        <li><a href="" class="ig_camp_del" data-toggle="modal"del-camp="<%= campaign[i].id %>">Delete</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            <!-- campaign list end -->
+        </div>
+    </div>
+</div>
+
+<div id="preview_template_popup" class="ig_popup_wrapper ig_popup_temp_preview">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close pre_popup" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Preview Template</div>
+        <div class="ig_popup_body preview_body"></div>
+    </div>
+</div>
+
+
+<div id="sendto_group_popup" class="ig_popup_wrapper">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close grp_popup" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Send to group</div>
+        <div class="ig_popup_body">
+            <div class="ig_input_wrapper">
+                <label>Subject</label>
+                <input type="text" class="ig_input" id="send_grp_sub" placeholder="Enter Subject">
+                <p id="subGrpError"></p>
+            </div>
+
+            <div class="ig_input_wrapper">
+                <label>Select Groups</label>
+                <select class="ig_input ig_select camp_grp_list" id="sel_grp">
+                    <option value="">Select Group</option>
+                    <% for(let i in grpDetails){ %>
+                    <option value="<%= grpDetails[i].id %>"><%= grpDetails[i].name %>  (<%= grpDetails[i].ig_contacts.length %>)</option>
+                    <% } %>
+                </select>
+                <p id="selGrpError"></p>
+            </div>
+
+            <div class="ig_input_wrapper grp_date_show" style="display:none;">
+                <label>Select Date/Time for schedule</label>
+                <input type="text" class="ig_input dateTime" id="grpDate">
+            </div>
+
+            <button type="button" class="ig_btn ig_btn_big send_grp">Send Now</button>
+            <button type="button" class="ig_btn ig_btn_big ig_btn_primary schedule_grp"><i class="far fa-clock"></i> Schedule</button>
+        </div>
+    </div>
+</div>
+
+<div id="sendto_contact_popup" class="ig_popup_wrapper">
+    <div class="ig_popup_inner">
+        <form id="contact_form">
+        <div class="ig_popup_close con_popup" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Send to contact</div>
+        <div class="ig_popup_body">
+            <div class="ig_input_wrapper">
+                <label>Subject</label>
+                <input type="text" class="ig_input" id="send_con_sub" placeholder="Enter Subject">
+                <p id="subConError"></p>
+            </div>
+            <div class="ig_input_wrapper">
+                <label>Select Contact</label>
+                <select class="ig_input ig_select camp_con_list" id="sel_con" multiple="multiple">
+                    <% for(let i in conDetails){ %>
+                    <option value="<%= conDetails[i].id %>"><%= conDetails[i].name %> (<%= conDetails[i].email %>)</option>
+                    <% } %>
+                </select>
+                <p id="selConError"></p>
+            </div>
+
+            <div class="ig_input_wrapper con_date_show" style="display:none;">
+                <label>Select Date/Time for schedule</label>
+                <input type="text" class="ig_input dateTime" id="mydateTime">
+            </div>
+            
+            <button type="button" class="ig_btn ig_btn_big con_btn">Send Now</button>
+            <button type="button" class="ig_btn ig_btn_big ig_btn_primary schedule_con"><i class="far fa-clock"></i> Schedule</button>
+        </div>
+        </form>
+    </div>
+</div>
+
+<div id="test_template_popup" class="ig_popup_wrapper">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close test_popup" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Send test mail</div>
+        <div class="ig_popup_body">
+            <div class="ig_input_wrapper">
+                <label>Subject</label>
+                <input type="text" class="ig_input" id="test_subject" placeholder="Enter subject">
+                <p id="testSubjectError"></p>
+            </div>
+            <div class="ig_input_wrapper">
+                <label>Email</label>
+                <input type="text" class="ig_input" id="test_email" placeholder="Enter email">
+                <p id="testEmailError"></p>
+            </div>
+            <button type="button" class="ig_btn ig_btn_big btn_send_mail">Send Now</button>
+        </div>
+    </div>
+</div>
+
+<div id="delete_campaign_popup" class="ig_popup_wrapper ig_delete_popup">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close del_popup_close" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Are you sure?</div>
+        <div class="ig_popup_body">
+            <p>you want to delete this campaign.</p>
+            <button class="ig_btn ig_btn_big ig_btn_red">Yes, delete now</button>
+            <button class="ig_btn ig_btn_big ig_btn_primary del_cancel" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<% include footer %>

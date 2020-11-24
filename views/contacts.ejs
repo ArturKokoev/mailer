@@ -1,0 +1,166 @@
+<%- include('header', {menu:'contacts'}) %>
+
+<div class="ig_content_wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ig_camp_header">
+                    <h3>Contacts (<%= contacts.length %>)</h3>
+                    <div>
+                        <button type="button" class="ig_btn ig_cont_cret" data-toggle="modal" data-target="#create_contact_popup">+ Create New</button> &nbsp;
+                        <button type="button" class="ig_btn ig_btn_light" data-toggle="modal" data-target="#create_group_popup">Manage Groups</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <table class="ig_datatable" id="contact_det">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Date</th>
+                            <th>Group</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% var index=1 %>
+                        <% for(let i in contacts){ %>
+                        <tr>
+                            <td><%= index %></td>
+                            <td><%= contacts[i].name %></td>
+                            <td><%= contacts[i].email %></td>
+                            <td><%= contacts[i].createdAt %></td>
+                            <td gp-id="<% if(contacts[i].group_id != null){ %><%= contacts[i].ig_group.id %><% }else{ %><%= '' %><% } %>"><% if(contacts[i].group_id != null){ %><%= contacts[i].ig_group.name %><% }else{ %><%= '-' %><% } %></td>
+                            <td>
+                                <div class="ig_table_action">
+                                    <span class="ig_ta_btn ig_contact_edit" contact-id="<%= contacts[i].id %>"><i class="fa fa-edit"></i></span>
+                                    <span class="ig_ta_btn ig_contact_del" contact-id-del="<%= contacts[i].id %>"><i class="fa fa-trash"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <% index++; } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="create_contact_popup" class="ig_popup_wrapper">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close cont_close" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_body crt_cont">
+            <div class="ig_popup_title">Create New Contact</div>
+            <div class="ig_input_wrapper">
+                <label>Groups <a class="ig_create_group_popup_link" style="float: right;">+ Add New</a></label>
+                <select class="ig_input ig_select" id="group_list">
+                    <option>Select Group</option>
+                    <% for(let i in group){ %>
+                        <option value="<%= group[i].id %>"><%= group[i].name %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="ig_input_wrapper">
+                <label>Name</label>
+                <input type="text" class="ig_input" id="ig_input_name" placeholder="Enter name">
+                <p id="nameInputError"></p>
+            </div>
+            <div class="ig_input_wrapper">
+                <label>Email</label>
+                <input type="text" class="ig_input" id="ig_input_email" placeholder="Enter email">
+                <p id="emailInputError"></p>
+            </div>
+            <button type="button" class="ig_btn ig_btn_big ig_crt_con">Create</button>
+        </div>
+    </div>
+</div>
+
+<div id="create_group_popup" class="ig_popup_wrapper">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close add_grp_popup" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Create New Group</div>
+        <div class="ig_popup_body">
+            <div class="ig_input_wrapper">
+                <label>Add New Group</label>
+                <input type="text" class="ig_input" id="ig_input_group" placeholder="Enter group name">
+                <p id="groupInputError"></p>
+            </div>
+            <div class="ig_group_list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="tag_count">#</th>
+                            <th>Name</th>
+                            <th class="tag_contacts">Contacts</th>
+                            <th class="tag_actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% var index=1 %>
+                        <% for(let i in group){ %>
+                        <tr>
+                            <td class="tag_count"><%= index %></td>
+                            <td class="tag_group"><%= group[i].name %></td>
+                            <td class="tag_contacts"><%= group[i].ig_contacts.length %></td>
+                            <td class="tag_actions">
+                                <span class="ig_ta_btn ig_edit_grp" group-id="<%= group[i].id %>"><i class="fa fa-edit"></i></span>
+                                <span class="ig_ta_btn ig_delete_group" group-id="<%= group[i].id %>"><i class="fa fa-trash"></i></span>
+                            </td>
+                        </tr>
+                        <% index++; } %>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="ig_btn ig_btn_big btn ig_crt_grp">Add</button>
+            <button type="button" class="ig_btn ig_btn_big ig_btn_primary ig_create_group_popup_cancel">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="update_contact_popup" class="ig_popup_wrapper">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close ig_edit_con_close" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_body crt_cont">
+            <div class="ig_popup_title">Edit Contact</div>
+            <div class="ig_input_wrapper">
+                <select class="ig_input ig_select" id="upd_group_list">
+                    <option value="">Select Group</option>
+                    <% for(let i in group){ %>
+                        <option value="<%= group[i].id %>"><%= group[i].name %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="ig_input_wrapper">
+                <label>Name</label>
+                <input type="text" class="ig_input" id="ig_upd_name" placeholder="Enter name">
+                <p id="nameUPDError"></p>
+            </div>
+            <div class="ig_input_wrapper">
+                <label>Email</label>
+                <input type="text" class="ig_input" id="ig_upd_email" placeholder="Enter email">
+                <p id="emailUPDError"></p>
+            </div>
+            <button type="button" class="ig_btn ig_btn_big ig_updt_con">Update</button>
+        </div>
+    </div>
+</div>
+
+<div id="delete_contact_popup" class="ig_popup_wrapper ig_delete_popup">
+    <div class="ig_popup_inner">
+        <div class="ig_popup_close con_popup_close" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        <div class="ig_popup_title">Are you sure?</div>
+        <div class="ig_popup_body">
+            <p>you want to delete.</p>
+            <button class="ig_btn ig_btn_big ig_btn_red contact">Yes, delete now</button>
+            <button class="ig_btn ig_btn_big ig_btn_primary con_cancel" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<% include footer %>
