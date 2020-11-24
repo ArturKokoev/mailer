@@ -1,11 +1,12 @@
 const db = {
     data : { 
-        host : 'localhost',
-        username : 'root',
-        password : '',
-        database : 'inboxgun',
+        host : 'sql289.main-hosting.eu',
+        username : 'u170153220_heroku',
+        password : 'Meloman12!',
+        database : 'u170153220_heroku',
         timezone: '+05:30' 
     }
 }
 
 module.exports = db
+
